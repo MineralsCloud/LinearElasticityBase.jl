@@ -85,21 +85,6 @@ ComplianceTensor(s::ComplianceMatrix) = ComplianceTensor(
     end)
 )
 
-Base.convert(::Type{TensorStress{T}}, σ::EngineeringStress{T}) where {T} = TensorStress(σ)
-Base.convert(::Type{EngineeringStress{T}}, σ::TensorStress{T}) where {T} =
-    EngineeringStress(σ)
-Base.convert(::Type{TensorStrain{T}}, ϵ::EngineeringStrain{T}) where {T} = TensorStrain(ϵ)
-Base.convert(::Type{EngineeringStrain{T}}, ε::TensorStrain{T}) where {T} =
-    EngineeringStrain(ε)
-Base.convert(::Type{StiffnessMatrix{T}}, c::StiffnessTensor{T}) where {T} =
-    StiffnessMatrix(c)
-Base.convert(::Type{ComplianceMatrix{T}}, s::ComplianceTensor{T}) where {T} =
-    ComplianceMatrix(s)
-Base.convert(::Type{StiffnessTensor{T}}, c::StiffnessMatrix{T}) where {T} =
-    StiffnessTensor(c)
-Base.convert(::Type{ComplianceTensor{T}}, s::ComplianceMatrix{T}) where {T} =
-    ComplianceTensor(s)
-
 Base.:*(c::StiffnessMatrix, ϵ::EngineeringStrain) = EngineeringStress(c.data ⋅ ϵ.data)
 Base.:*(s::ComplianceMatrix, σ::EngineeringStress) = EngineeringStrain(s.data ⋅ σ.data)
 
