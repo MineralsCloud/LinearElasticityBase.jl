@@ -2,8 +2,6 @@ using Tensorial: fromvoigt, ⊡, ⋅
 
 import Tensorial: contraction, double_contraction
 
-export contraction, double_contraction
-
 TensorStress(σ::EngineeringStress) = TensorStress(σ[1], σ[6], σ[5], σ[2], σ[4], σ[3])
 
 EngineeringStress(σ::TensorStress) =
