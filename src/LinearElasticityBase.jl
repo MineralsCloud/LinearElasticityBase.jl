@@ -1,6 +1,6 @@
 module LinearElasticityBase
 
 include("types.jl")
-include("conversion.jl")
+include("operations.jl")
 
 end
