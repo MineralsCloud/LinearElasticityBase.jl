@@ -1,3 +1,6 @@
+using ConstructionBase: constructorof
+using Tensorial: SymmetricSecondOrderTensor, SymmetricFourthOrderTensor, Vec
+
 abstract type Stress{T,N} <: AbstractArray{T,N} end
 abstract type Strain{T,N} <: AbstractArray{T,N} end
 abstract type Stiffness{T,N} <: AbstractArray{T,N} end
