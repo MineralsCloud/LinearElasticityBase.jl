@@ -56,36 +56,30 @@ Base.parent(A::Union{Stress,Strain,Stiffness,Compliance}) = A.data
 
 Base.IndexStyle(::Type{<:Union{Stress,Strain,Stiffness,Compliance}}) = IndexLinear()
 
+for T in (
+    :TensorStress,
+    :TensorStrain,
+    :EngineeringStress,
+    :EngineeringStrain,
+    :StiffnessMatrix,
+    :ComplianceMatrix,
+    :StiffnessTensor,
+    :ComplianceTensor,
+)
+    @eval begin
+        Base.BroadcastStyle(::Type{<:$T}) = Broadcast.ArrayStyle{$T}()
+        Base.similar(
+            bc::Broadcast.Broadcasted{Broadcast.ArrayStyle{$T}}, ::Type{S}
+        ) where {S} = similar($T{S}, axes(bc))
+        $T{S}(::UndefInitializer, dims) where {S} = $T(Array{S,length(dims)}(undef, dims))
+    end
+end
+
 function Base.similar(A::Union{EngineeringStress,EngineeringStrain}, ::Type{S}) where {S}
     T = constructorof(typeof(A))
-    return T(Vector{S}(undef, size(A)))
+    return T{S}(Vector{S}(undef, size(A)))
 end
 function Base.similar(A::Union{TensorStress,TensorStrain}, ::Type{S}) where {S}
     T = constructorof(typeof(A))
-    return T(Matrix{S}(undef, size(A)))
-end
-
-# See https://github.com/JuliaLang/julia/blob/cb9acf5/base/arraymath.jl#L19-L26
-for op in (:*, :/)
-    @eval Base.$op(A::Union{Stress,Strain,Stiffness,Compliance}, B::Number) =
-        constructorof(typeof(A))(Base.broadcast_preserving_zero_d($op, A, B))
-end
-Base.:*(B::Number, A::Union{Stress,Strain,Stiffness,Compliance}) = A * B
-
-Base.:-(A::Union{Stress,Strain,Stiffness,Compliance}) =
-    constructorof(typeof(A))(Base.broadcast_preserving_zero_d(-, A))
-
-for op in (:+, :-)
-    for T in (
-        :TensorStress,
-        :TensorStrain,
-        :EngineeringStress,
-        :EngineeringStrain,
-        :StiffnessMatrix,
-        :ComplianceMatrix,
-        :StiffnessTensor,
-        :ComplianceTensor,
-    )
-        @eval Base.$op(A::$T, B::$T) = $T(Base.broadcast_preserving_zero_d($op, A, B))
-    end
+    return T{S}(Matrix{S}(undef, size(A)))
 end

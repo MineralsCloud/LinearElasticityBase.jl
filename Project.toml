@@ -10,6 +10,7 @@ Tensorial = "98f94333-fa9f-48a9-ad80-1c66397b2b38"
 
 [compat]
 Tensorial = "0.12"
+ConstructionBase = "1"
 julia = "1"
 
 [extras]
