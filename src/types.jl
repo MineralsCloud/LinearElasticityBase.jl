@@ -1,5 +1,15 @@
 using ConstructionBase: constructorof
-using Tensorial: SymmetricSecondOrderTensor, SymmetricFourthOrderTensor, Vec
+using StaticArrays: MVector
+using Tensorial: SymmetricSecondOrderTensor, SymmetricFourthOrderTensor
+
+export TensorStress,
+    TensorStrain,
+    StiffnessTensor,
+    ComplianceTensor,
+    EngineeringStress,
+    EngineeringStrain,
+    ComplianceMatrix,
+    StiffnessMatrix
 
 abstract type Stress{T,N} <: AbstractArray{T,N} end
 abstract type Strain{T,N} <: AbstractArray{T,N} end
@@ -22,15 +32,15 @@ struct ComplianceTensor{T} <: Compliance{T,4}
     data::SymmetricFourthOrderTensor{3,T}
 end
 struct EngineeringStress{T} <: Stress{T,1}
-    data::Vec{6,T}
+    data::MVector{6,T}
 end
-EngineeringStress(v::AbstractVector) = EngineeringStress(Vec{6}(v))
-EngineeringStress(data...) = EngineeringStress(Vec{6}(data...))
+EngineeringStress(v::AbstractVector) = EngineeringStress(MVector{6}(v))
+EngineeringStress(data...) = EngineeringStress(MVector{6}(data...))
 struct EngineeringStrain{T} <: Strain{T,1}
-    data::Vec{6,T}
+    data::MVector{6,T}
 end
-EngineeringStrain(v::AbstractVector) = EngineeringStrain(Vec{6}(v))
-EngineeringStrain(data...) = EngineeringStrain(Vec{6}(data...))
+EngineeringStrain(v::AbstractVector) = EngineeringStrain(MVector{6}(v))
+EngineeringStrain(data...) = EngineeringStrain(MVector{6}(data...))
 struct StiffnessMatrix{T} <: Stiffness{T,2}
     data::SymmetricSecondOrderTensor{6,T,21}
 end
