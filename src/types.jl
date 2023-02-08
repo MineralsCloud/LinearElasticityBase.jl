@@ -57,7 +57,7 @@ Base.size(::Union{StiffnessTensor,ComplianceTensor}) = (3, 3, 3, 3)
 Base.size(::Union{EngineeringStress,EngineeringStrain}) = (6,)
 Base.size(::Union{StiffnessMatrix,ComplianceMatrix}) = (6, 6)
 
-Base.getindex(A::Union{Stress,Strain,Stiffness,Compliance}, i) = getindex(A.data, i)
+Base.getindex(A::Union{Stress,Strain,Stiffness,Compliance}, i) = getindex(parent(A), i)
 
 Base.setindex!(A::Union{EngineeringStress,EngineeringStrain}, v, i) =
     setindex!(parent(A), v, i)
