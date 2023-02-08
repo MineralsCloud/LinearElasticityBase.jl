@@ -77,11 +77,11 @@ end
 
 function Base.similar(A::Union{EngineeringStress,EngineeringStrain}, ::Type{S}) where {S}
     T = constructorof(typeof(A))
-    return T(Vector{S}(undef, size(A)))
+    return T{S}(Vector{S}(undef, size(A)))
 end
 function Base.similar(A::Union{TensorStress,TensorStrain}, ::Type{S}) where {S}
     T = constructorof(typeof(A))
-    return T(Matrix{S}(undef, size(A)))
+    return T{S}(Matrix{S}(undef, size(A)))
 end
 
 # See https://github.com/JuliaLang/julia/blob/cb9acf5/base/arraymath.jl#L19-L26
