@@ -173,8 +173,8 @@ deps = ["Libdl", "libblastrampoline_jll"]
 uuid = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 
 [[deps.LinearElasticityBase]]
-deps = ["ConstructionBase", "LinearAlgebra", "Tensorial"]
-git-tree-sha1 = "afd93824118bd2fe329c2ac2c7cb94b1f51635f9"
+deps = ["ConstructionBase", "LinearAlgebra", "StaticArrays", "Tensorial"]
+git-tree-sha1 = "536a959f6f5300c9ca5ec2048dd46cd9328a9aed"
 repo-rev = "main"
 repo-url = "https://github.com/MineralsCloud/LinearElasticityBase.jl"
 uuid = "c9ccf908-6911-46c3-b424-436f6a0ac525"
