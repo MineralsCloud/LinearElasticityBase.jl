@@ -10,8 +10,8 @@ StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
 Tensorial = "98f94333-fa9f-48a9-ad80-1c66397b2b38"
 
 [compat]
-Tensorial = "0.12"
 ConstructionBase = "1"
+Tensorial = "0.12"
 julia = "1"
 
 [extras]

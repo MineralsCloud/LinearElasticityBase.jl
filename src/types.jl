@@ -93,3 +93,18 @@ function Base.similar(A::Union{TensorStress,TensorStrain}, ::Type{S}) where {S}
     T = constructorof(typeof(A))
     return T{S}(Matrix{S}(undef, size(A)))
 end
+
+# See https://discourse.julialang.org/t/how-to-compare-two-vectors-whose-elements-are-equal-but-their-types-are-not-the-same/
+for (S, T) in (
+    (:EngineeringStress, :EngineeringStrain),
+    (:TensorStress, :TensorStrain),
+    (:StiffnessTensor, :ComplianceTensor),
+    (:StiffnessMatrix, :ComplianceMatrix),
+)
+    for op in (:(==), :isequal, :isapprox)
+        @eval begin
+            Base.$op(s::$S, t::$T) = false
+            Base.$op(t::$T, s::$S) = false
+        end
+    end
+end
