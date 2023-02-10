@@ -68,16 +68,7 @@ Base.parent(A::Union{Stress,Strain,Stiffness,Compliance}) = A.data
 
 Base.IndexStyle(::Type{<:Union{Stress,Strain,Stiffness,Compliance}}) = IndexLinear()
 
-for T in (
-    :TensorStress,
-    :TensorStrain,
-    :EngineeringStress,
-    :EngineeringStrain,
-    :StiffnessMatrix,
-    :ComplianceMatrix,
-    :StiffnessTensor,
-    :ComplianceTensor,
-)
+for T in (:EngineeringStress, :EngineeringStrain)
     @eval begin
         Base.BroadcastStyle(::Type{<:$T}) = Broadcast.ArrayStyle{$T}()
         Base.similar(
