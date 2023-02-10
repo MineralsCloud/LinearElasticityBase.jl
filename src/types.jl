@@ -1,6 +1,5 @@
 using StaticArrays: MVector
-using SymmetricFormats: SymmetricPacked
-using Tensorial: SymmetricFourthOrderTensor
+using Tensorial: SymmetricSecondOrderTensor, SymmetricFourthOrderTensor
 
 export TensorStress,
     TensorStrain,
@@ -18,15 +17,15 @@ abstract type Strain{T,N} <: AbstractArray{T,N} end
 abstract type Stiffness{T,N} <: AbstractArray{T,N} end
 abstract type Compliance{T,N} <: AbstractArray{T,N} end
 struct TensorStress{T} <: Stress{T,2}
-    data::SymmetricPacked{T,MVector{6,T}}
+    data::SymmetricSecondOrderTensor{3,T,6}
 end
-TensorStress(data::AbstractMatrix) = TensorStress(SymmetricPacked(data))
-TensorStress(values...) = TensorStress(SymmetricPacked(values, :L))
+TensorStress(data::AbstractMatrix) = TensorStress(SymmetricSecondOrderTensor{3}(data))
+TensorStress(values...) = TensorStress(SymmetricSecondOrderTensor{3}(values...))
 struct TensorStrain{T} <: Strain{T,2}
-    data::SymmetricPacked{T,MVector{6,T}}
+    data::SymmetricSecondOrderTensor{3,T,6}
 end
-TensorStrain(data::AbstractMatrix) = TensorStrain(SymmetricPacked(data))
-TensorStrain(values...) = TensorStrain(SymmetricPacked(values, :L))
+TensorStrain(data::AbstractMatrix) = TensorStrain(SymmetricSecondOrderTensor{3}(data))
+TensorStrain(values...) = TensorStrain(SymmetricSecondOrderTensor{3}(values...))
 struct StiffnessTensor{T} <: Stiffness{T,4}
     data::SymmetricFourthOrderTensor{3,T}
 end
@@ -44,15 +43,16 @@ end
 EngineeringStrain(data::AbstractVector) = EngineeringStrain(MVector{6}(data))
 EngineeringStrain(values...) = EngineeringStrain(MVector{6}(values...))
 struct StiffnessMatrix{T} <: Stiffness{T,2}
-    data::SymmetricPacked{T,MVector{21,T}}
+    data::SymmetricSecondOrderTensor{6,T,21}
 end
-StiffnessMatrix(data::AbstractMatrix) = StiffnessMatrix(SymmetricPacked(data))
-StiffnessMatrix(values...) = StiffnessMatrix(SymmetricPacked(values, :L))
+StiffnessMatrix(data::AbstractMatrix) = StiffnessMatrix(SymmetricSecondOrderTensor{6}(data))
+StiffnessMatrix(values...) = StiffnessMatrix(SymmetricSecondOrderTensor{6}(values...))
 struct ComplianceMatrix{T} <: Compliance{T,2}
-    data::SymmetricPacked{T,MVector{21,T}}
+    data::SymmetricSecondOrderTensor{6,T,21}
 end
-ComplianceMatrix(data::AbstractMatrix) = ComplianceMatrix(SymmetricPacked(data))
-ComplianceMatrix(values...) = ComplianceMatrix(SymmetricPacked(values, :L))
+ComplianceMatrix(data::AbstractMatrix) =
+    ComplianceMatrix(SymmetricSecondOrderTensor{6}(data))
+ComplianceMatrix(values...) = ComplianceMatrix(SymmetricSecondOrderTensor{6}(values...))
 
 Base.size(::Union{TensorStress,TensorStrain}) = (3, 3)
 Base.size(::Union{StiffnessTensor,ComplianceTensor}) = (3, 3, 3, 3)
@@ -63,23 +63,12 @@ Base.getindex(A::Union{Stress,Strain,Stiffness,Compliance}, i) = getindex(parent
 
 Base.setindex!(A::Union{EngineeringStress,EngineeringStrain}, v, i) =
     setindex!(parent(A), v, i)
-# Only set diagonal terms, see https://github.com/JuliaLang/LinearAlgebra.jl/issues/7
-Base.setindex!(A::Union{TensorStress,TensorStrain}, v, i) = setindex!(parent(A), v, i)
 
 Base.parent(A::Union{Stress,Strain,Stiffness,Compliance}) = A.data
 
 Base.IndexStyle(::Type{<:Union{Stress,Strain,Stiffness,Compliance}}) = IndexLinear()
 
-for T in (
-    :TensorStress,
-    :TensorStrain,
-    :EngineeringStress,
-    :EngineeringStrain,
-    :StiffnessMatrix,
-    :ComplianceMatrix,
-    :StiffnessTensor,
-    :ComplianceTensor,
-)
+for T in (:EngineeringStress, :EngineeringStrain)
     @eval begin
         Base.BroadcastStyle(::Type{<:$T}) = Broadcast.ArrayStyle{$T}()
         Base.similar(
@@ -90,10 +79,7 @@ for T in (
 end
 
 for T in (:EngineeringStress, :EngineeringStrain)
-    @eval Base.similar(A::$T, ::Type{S}) where {S} = $T(Vector{S}(undef, size(A)))
-end
-for T in (:TensorStress, :TensorStrain)
-    @eval Base.similar(A::$T, ::Type{S}) where {S} = $T(Matrix{S}(undef, size(A)))
+    @eval Base.similar(::$T, ::Type{S}, dims::Dims) where {S} = $T(Vector{S}(undef, dims))
 end
 
 # See https://discourse.julialang.org/t/how-to-compare-two-vectors-whose-elements-are-equal-but-their-types-are-not-the-same/94309/6
