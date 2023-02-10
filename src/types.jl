@@ -10,7 +10,8 @@ export TensorStress,
     EngineeringStrain,
     ComplianceMatrix,
     StiffnessMatrix,
-    isequivalent
+    isequivalent,
+    ⩵
 
 abstract type Stress{T,N} <: AbstractArray{T,N} end
 abstract type Strain{T,N} <: AbstractArray{T,N} end
@@ -104,3 +105,5 @@ for (S, T) in (
         isequivalent(t::$T, s::$S) = isequivalent(s, t)
     end
 end
+isequivalent(x, y) = x == y  # Fallback
+const ⩵ = isequivalent
