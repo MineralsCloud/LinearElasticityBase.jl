@@ -1,6 +1,7 @@
 using ConstructionBase: constructorof
-using StaticArrays: MVector
-using Tensorial: SymmetricSecondOrderTensor, SymmetricFourthOrderTensor
+using StaticArrays: MVector, MMatrix
+using SymmetricFormats: SymmetricPacked
+using Tensorial: SymmetricFourthOrderTensor
 
 export TensorStress,
     TensorStrain,
@@ -16,15 +17,13 @@ abstract type Strain{T,N} <: AbstractArray{T,N} end
 abstract type Stiffness{T,N} <: AbstractArray{T,N} end
 abstract type Compliance{T,N} <: AbstractArray{T,N} end
 struct TensorStress{T} <: Stress{T,2}
-    data::SymmetricSecondOrderTensor{3,T,6}
+    data::SymmetricPacked{T,MMatrix{3,3,T,9}}
 end
-TensorStress(m::AbstractMatrix) = TensorStress(SymmetricSecondOrderTensor{3}(m))
-TensorStress(data...) = TensorStress(SymmetricSecondOrderTensor{3}(data...))
+TensorStress(m::AbstractMatrix) = TensorStress(SymmetricPacked(MMatrix{3,3}(m)))
 struct TensorStrain{T} <: Strain{T,2}
-    data::SymmetricSecondOrderTensor{3,T,6}
+    data::SymmetricPacked{T,MMatrix{3,3,T,9}}
 end
-TensorStrain(m::AbstractMatrix) = TensorStrain(SymmetricSecondOrderTensor{3}(m))
-TensorStrain(data...) = TensorStrain(SymmetricSecondOrderTensor{3}(data...))
+TensorStrain(m::AbstractMatrix) = TensorStrain(SymmetricPacked(MMatrix{3,3}(m)))
 struct StiffnessTensor{T} <: Stiffness{T,4}
     data::SymmetricFourthOrderTensor{3,T}
 end
@@ -42,15 +41,13 @@ end
 EngineeringStrain(v::AbstractVector) = EngineeringStrain(MVector{6}(v))
 EngineeringStrain(data...) = EngineeringStrain(MVector{6}(data...))
 struct StiffnessMatrix{T} <: Stiffness{T,2}
-    data::SymmetricSecondOrderTensor{6,T,21}
+    data::SymmetricPacked{T,MMatrix{6,6,T,36}}
 end
-StiffnessMatrix(m::AbstractMatrix) = StiffnessMatrix(SymmetricSecondOrderTensor{6}(m))
-StiffnessMatrix(data...) = StiffnessMatrix(SymmetricSecondOrderTensor{6}(data...))
+StiffnessMatrix(m::AbstractMatrix) = StiffnessMatrix(SymmetricPacked(MMatrix{6,6}(m)))
 struct ComplianceMatrix{T} <: Compliance{T,2}
-    data::SymmetricSecondOrderTensor{6,T,21}
+    data::SymmetricPacked{T,MMatrix{6,6,T,36}}
 end
-ComplianceMatrix(m::AbstractMatrix) = ComplianceMatrix(SymmetricSecondOrderTensor{6}(m))
-ComplianceMatrix(data...) = ComplianceMatrix(SymmetricSecondOrderTensor{6}(data...))
+ComplianceMatrix(m::AbstractMatrix) = ComplianceMatrix(SymmetricPacked(MMatrix{6,6}(m)))
 
 Base.size(::Union{TensorStress,TensorStrain}) = (3, 3)
 Base.size(::Union{StiffnessTensor,ComplianceTensor}) = (3, 3, 3, 3)
