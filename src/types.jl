@@ -59,6 +59,8 @@ Base.getindex(A::Union{Stress,Strain,Stiffness,Compliance}, i) = getindex(parent
 
 Base.setindex!(A::Union{EngineeringStress,EngineeringStrain}, v, i) =
     setindex!(parent(A), v, i)
+# Only set diagonal terms, see https://github.com/JuliaLang/LinearAlgebra.jl/issues/7
+Base.setindex!(A::Union{TensorStress,TensorStrain}, v, i) = setindex!(parent(A), v, i)
 
 Base.parent(A::Union{Stress,Strain,Stiffness,Compliance}) = A.data
 
