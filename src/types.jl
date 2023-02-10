@@ -85,10 +85,10 @@ for T in (
 end
 
 for T in (:EngineeringStress, :EngineeringStrain)
-    Base.similar(A::$T, ::Type{S}) where {S} = $T(Vector{S}(undef, size(A)))
+    @eval Base.similar(A::$T, ::Type{S}) where {S} = $T(Vector{S}(undef, size(A)))
 end
 for T in (:TensorStress, :TensorStrain)
-    Base.similar(A::$T, ::Type{S}) where {S} = $T(Matrix{S}(undef, size(A)))
+    @eval Base.similar(A::$T, ::Type{S}) where {S} = $T(Matrix{S}(undef, size(A)))
 end
 
 # See https://discourse.julialang.org/t/how-to-compare-two-vectors-whose-elements-are-equal-but-their-types-are-not-the-same/
