@@ -1,4 +1,4 @@
-using StaticArrays: MVector, MMatrix
+using StaticArrays: MVector
 using SymmetricFormats: SymmetricPacked
 using Tensorial: SymmetricFourthOrderTensor
 
@@ -18,13 +18,15 @@ abstract type Strain{T,N} <: AbstractArray{T,N} end
 abstract type Stiffness{T,N} <: AbstractArray{T,N} end
 abstract type Compliance{T,N} <: AbstractArray{T,N} end
 struct TensorStress{T} <: Stress{T,2}
-    data::SymmetricPacked{T,MMatrix{3,3,T,9}}
+    data::SymmetricPacked{T,MVector{6,T}}
 end
-TensorStress(data::AbstractMatrix) = TensorStress(SymmetricPacked(MMatrix{3,3}(data)))
+TensorStress(data::AbstractMatrix) = TensorStress(SymmetricPacked(data))
+TensorStress(values...) = TensorStress(SymmetricPacked(values, :L))
 struct TensorStrain{T} <: Strain{T,2}
-    data::SymmetricPacked{T,MMatrix{3,3,T,9}}
+    data::SymmetricPacked{T,MVector{6,T}}
 end
-TensorStrain(data::AbstractMatrix) = TensorStrain(SymmetricPacked(MMatrix{3,3}(data)))
+TensorStrain(data::AbstractMatrix) = TensorStrain(SymmetricPacked(data))
+TensorStrain(values...) = TensorStrain(SymmetricPacked(values, :L))
 struct StiffnessTensor{T} <: Stiffness{T,4}
     data::SymmetricFourthOrderTensor{3,T}
 end
@@ -42,14 +44,15 @@ end
 EngineeringStrain(data::AbstractVector) = EngineeringStrain(MVector{6}(data))
 EngineeringStrain(values...) = EngineeringStrain(MVector{6}(values...))
 struct StiffnessMatrix{T} <: Stiffness{T,2}
-    data::SymmetricPacked{T,MMatrix{6,6,T,36}}
+    data::SymmetricPacked{T,MVector{21,T}}
 end
-StiffnessMatrix(data::AbstractMatrix) = StiffnessMatrix(SymmetricPacked(MMatrix{6,6}(data)))
+StiffnessMatrix(data::AbstractMatrix) = StiffnessMatrix(SymmetricPacked(data))
+StiffnessMatrix(values...) = StiffnessMatrix(SymmetricPacked(values, :L))
 struct ComplianceMatrix{T} <: Compliance{T,2}
-    data::SymmetricPacked{T,MMatrix{6,6,T,36}}
+    data::SymmetricPacked{T,MVector{21,T}}
 end
-ComplianceMatrix(data::AbstractMatrix) =
-    ComplianceMatrix(SymmetricPacked(MMatrix{6,6}(data)))
+ComplianceMatrix(data::AbstractMatrix) = ComplianceMatrix(SymmetricPacked(data))
+ComplianceMatrix(values...) = ComplianceMatrix(SymmetricPacked(values, :L))
 
 Base.size(::Union{TensorStress,TensorStrain}) = (3, 3)
 Base.size(::Union{StiffnessTensor,ComplianceTensor}) = (3, 3, 3, 3)
