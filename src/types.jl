@@ -85,13 +85,11 @@ for T in (
     end
 end
 
-function Base.similar(A::Union{EngineeringStress,EngineeringStrain}, ::Type{S}) where {S}
-    T = constructorof(typeof(A))
-    return T{S}(Vector{S}(undef, size(A)))
+for T in (:EngineeringStress, :EngineeringStrain)
+    Base.similar(A::$T, ::Type{S}) where {S} = $T(Vector{S}(undef, size(A)))
 end
-function Base.similar(A::Union{TensorStress,TensorStrain}, ::Type{S}) where {S}
-    T = constructorof(typeof(A))
-    return T{S}(Matrix{S}(undef, size(A)))
+for T in (:TensorStress, :TensorStrain)
+    Base.similar(A::$T, ::Type{S}) where {S} = $T(Matrix{S}(undef, size(A)))
 end
 
 # See https://discourse.julialang.org/t/how-to-compare-two-vectors-whose-elements-are-equal-but-their-types-are-not-the-same/
