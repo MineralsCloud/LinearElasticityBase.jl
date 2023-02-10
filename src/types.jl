@@ -19,11 +19,11 @@ abstract type Compliance{T,N} <: AbstractArray{T,N} end
 struct TensorStress{T} <: Stress{T,2}
     data::SymmetricPacked{T,MMatrix{3,3,T,9}}
 end
-TensorStress(m::AbstractMatrix) = TensorStress(SymmetricPacked(MMatrix{3,3}(m)))
+TensorStress(data::AbstractMatrix) = TensorStress(SymmetricPacked(MMatrix{3,3}(data)))
 struct TensorStrain{T} <: Strain{T,2}
     data::SymmetricPacked{T,MMatrix{3,3,T,9}}
 end
-TensorStrain(m::AbstractMatrix) = TensorStrain(SymmetricPacked(MMatrix{3,3}(m)))
+TensorStrain(data::AbstractMatrix) = TensorStrain(SymmetricPacked(MMatrix{3,3}(data)))
 struct StiffnessTensor{T} <: Stiffness{T,4}
     data::SymmetricFourthOrderTensor{3,T}
 end
@@ -33,21 +33,22 @@ end
 struct EngineeringStress{T} <: Stress{T,1}
     data::MVector{6,T}
 end
-EngineeringStress(v::AbstractVector) = EngineeringStress(MVector{6}(v))
-EngineeringStress(data...) = EngineeringStress(MVector{6}(data...))
+EngineeringStress(data::AbstractVector) = EngineeringStress(MVector{6}(data))
+EngineeringStress(values...) = EngineeringStress(MVector{6}(values...))
 struct EngineeringStrain{T} <: Strain{T,1}
     data::MVector{6,T}
 end
-EngineeringStrain(v::AbstractVector) = EngineeringStrain(MVector{6}(v))
-EngineeringStrain(data...) = EngineeringStrain(MVector{6}(data...))
+EngineeringStrain(data::AbstractVector) = EngineeringStrain(MVector{6}(data))
+EngineeringStrain(values...) = EngineeringStrain(MVector{6}(values...))
 struct StiffnessMatrix{T} <: Stiffness{T,2}
     data::SymmetricPacked{T,MMatrix{6,6,T,36}}
 end
-StiffnessMatrix(m::AbstractMatrix) = StiffnessMatrix(SymmetricPacked(MMatrix{6,6}(m)))
+StiffnessMatrix(data::AbstractMatrix) = StiffnessMatrix(SymmetricPacked(MMatrix{6,6}(data)))
 struct ComplianceMatrix{T} <: Compliance{T,2}
     data::SymmetricPacked{T,MMatrix{6,6,T,36}}
 end
-ComplianceMatrix(m::AbstractMatrix) = ComplianceMatrix(SymmetricPacked(MMatrix{6,6}(m)))
+ComplianceMatrix(data::AbstractMatrix) =
+    ComplianceMatrix(SymmetricPacked(MMatrix{6,6}(data)))
 
 Base.size(::Union{TensorStress,TensorStrain}) = (3, 3)
 Base.size(::Union{StiffnessTensor,ComplianceTensor}) = (3, 3, 3, 3)
