@@ -1,4 +1,3 @@
-using ConstructionBase: constructorof
 using StaticArrays: MVector, MMatrix
 using SymmetricFormats: SymmetricPacked
 using Tensorial: SymmetricFourthOrderTensor
