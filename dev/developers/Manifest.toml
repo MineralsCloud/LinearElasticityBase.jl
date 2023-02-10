@@ -168,7 +168,7 @@ uuid = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 
 [[deps.LinearElasticityBase]]
 deps = ["LinearAlgebra", "StaticArrays", "Tensorial"]
-git-tree-sha1 = "74d6e7e33d83aa08a6c5a502c07b307b80563cbf"
+git-tree-sha1 = "0b2bc0af881288ce5296f07b68fd93947c0da2a0"
 repo-rev = "main"
 repo-url = "https://github.com/MineralsCloud/LinearElasticityBase.jl"
 uuid = "c9ccf908-6911-46c3-b424-436f6a0ac525"
