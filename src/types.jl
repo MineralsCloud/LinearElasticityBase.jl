@@ -8,9 +8,7 @@ export TensorStress,
     EngineeringStress,
     EngineeringStrain,
     ComplianceMatrix,
-    StiffnessMatrix,
-    isequivalent,
-    ⩵
+    StiffnessMatrix
 
 abstract type Stress{T,N} <: AbstractArray{T,N} end
 abstract type Strain{T,N} <: AbstractArray{T,N} end
@@ -81,18 +79,3 @@ end
 for T in (:EngineeringStress, :EngineeringStrain)
     @eval Base.similar(::$T, ::Type{S}, dims::Dims) where {S} = $T(Vector{S}(undef, dims))
 end
-
-# See https://discourse.julialang.org/t/how-to-compare-two-vectors-whose-elements-are-equal-but-their-types-are-not-the-same/94309/6
-for (S, T) in (
-    (:EngineeringStress, :EngineeringStrain),
-    (:TensorStress, :TensorStrain),
-    (:StiffnessTensor, :ComplianceTensor),
-    (:StiffnessMatrix, :ComplianceMatrix),
-)
-    @eval begin
-        isequivalent(s::$S, t::$T) = false
-        isequivalent(t::$T, s::$S) = isequivalent(s, t)
-    end
-end
-isequivalent(x, y) = x == y  # Fallback
-const ⩵ = isequivalent

@@ -2,6 +2,8 @@ using Tensorial: fromvoigt, ⊡, ⋅
 
 import Tensorial: contraction, double_contraction
 
+export isequivalent, ⩵
+
 TensorStress(σ::EngineeringStress) = TensorStress(σ[1], σ[6], σ[5], σ[2], σ[4], σ[3])
 
 EngineeringStress(σ::TensorStress) =
@@ -91,3 +93,18 @@ contraction(s::ComplianceTensor, σ::TensorStress, ::Val{2}) = TensorStrain(s.da
 
 @inline double_contraction(c::StiffnessTensor, ε::TensorStrain) = contraction(c, ε, Val(2))
 @inline double_contraction(s::ComplianceTensor, σ::TensorStress) = contraction(s, σ, Val(2))
+
+# See https://discourse.julialang.org/t/how-to-compare-two-vectors-whose-elements-are-equal-but-their-types-are-not-the-same/94309/6
+for (S, T) in (
+    (:EngineeringStress, :EngineeringStrain),
+    (:TensorStress, :TensorStrain),
+    (:StiffnessTensor, :ComplianceTensor),
+    (:StiffnessMatrix, :ComplianceMatrix),
+)
+    @eval begin
+        isequivalent(s::$S, t::$T) = false
+        isequivalent(t::$T, s::$S) = isequivalent(s, t)
+    end
+end
+isequivalent(x, y) = x == y  # Fallback
+const ⩵ = isequivalent
