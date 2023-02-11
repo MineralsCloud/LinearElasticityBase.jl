@@ -2,5 +2,5 @@ using LinearElasticityBase
 using Test
 
 @testset "LinearElasticityBase.jl" begin
-    include("arithmetic.jl")
+    include("operations.jl")
 end
