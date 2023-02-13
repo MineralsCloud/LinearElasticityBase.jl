@@ -1,0 +1,3 @@
+[deps]
+JuliaFormatter = "98e50ef6-434e-11e9-1051-2b60c6c9e899"
+LinearElasticityBase = "c9ccf908-6911-46c3-b424-436f6a0ac525"
