@@ -8,9 +8,10 @@ principal_values(x::Union{TensorStress,TensorStrain}) = _eigen(x).values
 
 principal_axes(x::Union{TensorStress,TensorStrain}) = _eigen(x).vectors
 
-principal_invariants(x::Union{TensorStress,TensorStrain}) = stress_invariants(x.data)
+principal_invariants(x::Union{TensorStress,TensorStrain}) = stress_invariants(parent(x))
 
-main_invariants(x::Union{TensorStress,TensorStrain}) = deviatoric_stress_invariants(x.data)
+main_invariants(x::Union{TensorStress,TensorStrain}) =
+    deviatoric_stress_invariants(parent(x))
 
 for T in (:TensorStress, :TensorStrain)
     @eval begin
