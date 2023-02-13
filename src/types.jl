@@ -81,6 +81,7 @@ Base.setindex!(A::Union{EngineeringStress,EngineeringStrain}, v, i) =
 Base.setindex!(
     A::Union{TensorStress,TensorStrain,StiffnessMatrix,ComplianceMatrix}, v, i::Integer
 ) = setindex!(parent(A), v, i)
+# See https://github.com/JuliaLang/LinearAlgebra.jl/blob/13df5a2/src/symmetric.jl#L226-L229
 function Base.setindex!(
     A::Union{TensorStress,TensorStrain,StiffnessMatrix,ComplianceMatrix},
     v,
