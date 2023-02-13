@@ -114,7 +114,3 @@ for T in (
         Base.similar(::Type{S}, dims::Dims) where {S<:$T} = $T(zeros(eltype(S), dims))
     end
 end
-
-for T in (:EngineeringStress, :EngineeringStrain)
-    @eval Base.similar(::$T, ::Type{S}, dims::Dims) where {S} = $T(Vector{S}(undef, dims))
-end
