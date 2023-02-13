@@ -98,13 +98,20 @@ Base.parent(A::Union{Stress,Strain,Stiffness,Compliance}) = A.data
 
 Base.IndexStyle(::Type{<:Union{Stress,Strain,Stiffness,Compliance}}) = IndexLinear()
 
-for T in (:EngineeringStress, :EngineeringStrain)
+for T in (
+    :EngineeringStress,
+    :EngineeringStrain,
+    :TensorStress,
+    :TensorStrain,
+    :StiffnessMatrix,
+    :ComplianceMatrix,
+)
     @eval begin
         Base.BroadcastStyle(::Type{<:$T}) = Broadcast.ArrayStyle{$T}()
         Base.similar(
             bc::Broadcast.Broadcasted{Broadcast.ArrayStyle{$T}}, ::Type{S}
         ) where {S} = similar($T{S}, axes(bc))
-        $T{S}(::UndefInitializer, dims) where {S} = $T(Array{S,length(dims)}(undef, dims))
+        Base.similar(::Type{S}, dims::Dims) where {S<:$T} = $T(zeros(eltype(S), dims))
     end
 end
 
