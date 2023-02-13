@@ -1,5 +1,4 @@
 using LinearAlgebra: I, diagm, norm, tr
-using Unitful: @u_str
 
 # Example from https://www.continuummechanics.org/hydrodeviatoricstrain.html
 @testset "Test `hydrostatic` and `deviatoric`" begin
