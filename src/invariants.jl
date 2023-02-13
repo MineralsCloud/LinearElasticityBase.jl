@@ -21,7 +21,7 @@ for T in (:TensorStress, :TensorStrain)
 end
 
 function _eigen(x)
-    unitless = @. x / oneunit(x)
-    eg = eigen(unitless)
-    return Eigen(eg.values * oneunit(x[1]), eg.vectors)
+    x′ = @. x / oneunit(x)  # Dimensionless
+    eg = eigen(Matrix(x′))
+    return Eigen(eg.values * oneunit(eltype(x)), eg.vectors)
 end
