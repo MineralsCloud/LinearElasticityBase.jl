@@ -65,7 +65,8 @@ struct ComplianceMatrix{T} <: Compliance{T,2}
         return new(data)
     end
 end
-ComplianceMatrix(data::AbstractMatrix{T}) where {T} = ComplianceMatrix{T}(MMatrix{6,6}(data))
+ComplianceMatrix(data::AbstractMatrix{T}) where {T} =
+    ComplianceMatrix{T}(MMatrix{6,6}(data))
 ComplianceMatrix(values...) = ComplianceMatrix(SymmetricSecondOrderTensor{6}(values...))
 
 Base.size(::Union{TensorStress,TensorStrain}) = (3, 3)
