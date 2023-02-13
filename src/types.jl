@@ -77,6 +77,22 @@ Base.getindex(A::Union{Stress,Strain,Stiffness,Compliance}, i) = getindex(parent
 
 Base.setindex!(A::Union{EngineeringStress,EngineeringStrain}, v, i) =
     setindex!(parent(A), v, i)
+Base.setindex!(
+    A::Union{TensorStress,TensorStrain,StiffnessMatrix,ComplianceMatrix}, v, i::Integer
+) = setindex!(parent(A), v, i)
+function Base.setindex!(
+    A::Union{TensorStress,TensorStrain,StiffnessMatrix,ComplianceMatrix},
+    v,
+    i::Integer,
+    j::Integer,
+)
+    if i == j
+        setindex!(parent(A), v, i, i)
+    else
+        setindex!(parent(A), v, i, j)
+        setindex!(parent(A), v, j, i)
+    end
+end
 
 Base.parent(A::Union{Stress,Strain,Stiffness,Compliance}) = A.data
 
