@@ -10,10 +10,17 @@ export TensorStress,
     ComplianceMatrix,
     StiffnessMatrix
 
-abstract type Stress{T,N} <: AbstractArray{T,N} end
-abstract type Strain{T,N} <: AbstractArray{T,N} end
-abstract type Stiffness{T,N} <: AbstractArray{T,N} end
-abstract type Compliance{T,N} <: AbstractArray{T,N} end
+abstract type Variable{T,N} <: AbstractArray{T,N} end
+abstract type ElasticConstants{T,N} <: AbstractArray{T,N} end
+abstract type Stress{T,N} <: Variable{T,N} end
+abstract type Strain{T,N} <: Variable{T,N} end
+abstract type Stiffness{T,N} <: ElasticConstants{T,N} end
+abstract type Compliance{T,N} <: ElasticConstants{T,N} end
+# See https://github.com/JuliaLang/julia/blob/237c92d/base/array.jl#L38
+const TensorVariable{T} = Variable{T,2}
+const EngineeringVariable{T} = Variable{T,1}
+const ElasticConstantsTensor{T} = ElasticConstants{T,4}
+const ElasticConstantsMatrix{T} = ElasticConstants{T,2}
 struct TensorStress{T} <: Stress{T,2}
     data::MMatrix{3,3,T,9}
 end
@@ -56,24 +63,19 @@ ComplianceMatrix(data::AbstractMatrix{T}) where {T} =
     ComplianceMatrix{T}(MMatrix{6,6}(data))
 ComplianceMatrix(values...) = ComplianceMatrix(SymmetricSecondOrderTensor{6}(values...))
 
-Base.size(::Union{TensorStress,TensorStrain}) = (3, 3)
-Base.size(::Union{StiffnessTensor,ComplianceTensor}) = (3, 3, 3, 3)
-Base.size(::Union{EngineeringStress,EngineeringStrain}) = (6,)
-Base.size(::Union{StiffnessMatrix,ComplianceMatrix}) = (6, 6)
+Base.size(::TensorVariable) = (3, 3)
+Base.size(::ElasticConstantsTensor) = (3, 3, 3, 3)
+Base.size(::EngineeringVariable) = (6,)
+Base.size(::ElasticConstantsMatrix) = (6, 6)
 
-Base.getindex(A::Union{Stress,Strain,Stiffness,Compliance}, i) = getindex(parent(A), i)
+Base.getindex(A::Union{Variable,ElasticConstants}, i) = getindex(parent(A), i)
 
-Base.setindex!(A::Union{EngineeringStress,EngineeringStrain}, v, i) =
+Base.setindex!(A::EngineeringVariable, v, i) = setindex!(parent(A), v, i)
+Base.setindex!(A::Union{TensorVariable,ElasticConstantsMatrix}, v, i::Integer) =
     setindex!(parent(A), v, i)
-Base.setindex!(
-    A::Union{TensorStress,TensorStrain,StiffnessMatrix,ComplianceMatrix}, v, i::Integer
-) = setindex!(parent(A), v, i)
 # See https://github.com/JuliaLang/LinearAlgebra.jl/blob/13df5a2/src/symmetric.jl#L226-L229
 function Base.setindex!(
-    A::Union{TensorStress,TensorStrain,StiffnessMatrix,ComplianceMatrix},
-    v,
-    i::Integer,
-    j::Integer,
+    A::Union{TensorVariable,ElasticConstantsMatrix}, v, i::Integer, j::Integer
 )
     if i == j
         setindex!(parent(A), v, i, i)
@@ -83,9 +85,9 @@ function Base.setindex!(
     end
 end
 
-Base.parent(A::Union{Stress,Strain,Stiffness,Compliance}) = A.data
+Base.parent(A::Union{Variable,ElasticConstants}) = A.data
 
-Base.IndexStyle(::Type{<:Union{Stress,Strain,Stiffness,Compliance}}) = IndexLinear()
+Base.IndexStyle(::Type{<:Union{Variable,ElasticConstants}}) = IndexLinear()
 
 for T in (
     :EngineeringStress,
