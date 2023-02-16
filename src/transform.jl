@@ -48,11 +48,12 @@ for S in (:StiffnessMatrix, :ComplianceMatrix, :EngineeringStrain, :EngineeringS
 end
 
 """
-    isorthonormal(Q::AbstractMatrix, rtol=√eps)
+    isorthonormal(Q::AbstractMatrix)
 
-Test whether `Q` is an orthonormal matrix, with relative tolerance `rtol`.
+Test whether `Q` is an orthonormal matrix.
 """
-function isorthonormal(Q::AbstractMatrix, rtol=√eps)
+function isorthonormal(Q::AbstractMatrix)
+    rtol = get_rtol()
     if Q' * Q == Q * Q' == I
         return true
     else
@@ -70,3 +71,10 @@ transformation between two orthonormal reference frames. Let those frames be rig
 then this transformation is always a rotation.
 """
 isrotation(Q::AbstractMatrix, rtol=√eps) = size(Q) == (3, 3) && isorthonormal(Q, rtol)
+
+# See https://github.com/KristofferC/OhMyREPL.jl/blob/f682498/src/BracketInserter.jl#L44-L45
+const RTOL = Ref(sqrt(eps()))
+
+get_rtol() = RTOL[]
+
+set_rtol(v::Real) = RTOL[] = v
