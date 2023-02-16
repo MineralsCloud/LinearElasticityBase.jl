@@ -29,14 +29,14 @@ for S in (:StiffnessTensor, :ComplianceTensor)
     @eval function rotate_axes(T::$S, Q::AbstractMatrix)
         @assert isrotation(Q)
         @einsum T′[i, j, k, l] := T[m, n, o, p] * Q[i, m] * Q[j, n] * Q[k, o] * Q[l, p]
-        return $S(T)
+        return $S(T′)
     end
 end
 for S in (:TensorStrain, :TensorStress)
     @eval function rotate_axes(T::$S, Q::AbstractMatrix)
         @assert isrotation(Q)
         @einsum T′[i, j] := T[k, l] * Q[i, k] * Q[j, l]
-        return $S(T)
+        return $S(T′)
     end
 end
 for S in (:StiffnessMatrix, :ComplianceMatrix, :EngineeringStrain, :EngineeringStress)

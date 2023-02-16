@@ -6,4 +6,5 @@ using Test
     include("operations.jl")
     include("invariants.jl")
     include("axial.jl")
+    include("transform.jl")
 end
