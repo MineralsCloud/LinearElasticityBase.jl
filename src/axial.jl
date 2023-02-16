@@ -1,12 +1,11 @@
 export isuniaxial, isbiaxial
 
 # No shear components, only one normal component is nonzero
-isuniaxial(x::Union{EngineeringStress,EngineeringStrain}) =
-    iszero(x[4:end]) && length(filter(iszero, x[1:3])) == 2
+isuniaxial(x::EngineeringVariable) = iszero(x[4:end]) && length(filter(iszero, x[1:3])) == 2
 isuniaxial(σ::TensorStress) = isuniaxial(EngineeringStress(σ))
 isuniaxial(ε::TensorStrain) = isuniaxial(EngineeringStrain(ε))
 
-function isbiaxial(x::Union{EngineeringStress,EngineeringStrain})
+function isbiaxial(x::EngineeringVariable)
     n = length(filter(!iszero, x[4:end]))
     return if n > 1
         false  # Triaxial
