@@ -18,9 +18,9 @@ for S in (:TensorStrain, :TensorStress)
     end
 end
 for S in (:StiffnessMatrix, :ComplianceMatrix, :EngineeringStrain, :EngineeringStress)
-    @eval function rotate(T′::$S, Q::AbstractMatrix)
-        t′ = to_tensor(T′)
-        T = rotate(t′, Q)
+    @eval function rotate(x::$S, Q::AbstractMatrix)
+        T′ = to_tensor(x)
+        T = rotate(T′, Q)
         return to_voigt(T)
     end
 end
@@ -40,9 +40,9 @@ for S in (:TensorStrain, :TensorStress)
     end
 end
 for S in (:StiffnessMatrix, :ComplianceMatrix, :EngineeringStrain, :EngineeringStress)
-    @eval function rotate_axes(T::$S, Q::AbstractMatrix)
-        t = to_tensor(T)
-        T′ = rotate_axes(t, Q)
+    @eval function rotate_axes(x::$S, Q::AbstractMatrix)
+        T = to_tensor(x)
+        T′ = rotate_axes(T, Q)
         return to_voigt(T′)
     end
 end
