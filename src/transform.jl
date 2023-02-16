@@ -48,11 +48,17 @@ for S in (:StiffnessMatrix, :ComplianceMatrix, :EngineeringStrain, :EngineeringS
 end
 
 """
-    isorthonormal(Q::AbstractMatrix)
+    isorthonormal(Q::AbstractMatrix, rtol=√eps)
 
-Test whether `Q` is an orthonormal matrix.
+Test whether `Q` is an orthonormal matrix, with relative tolerance `rtol`.
 """
-isorthonormal(Q::AbstractMatrix) = Q' * Q == Q * Q' == I
+function isorthonormal(Q::AbstractMatrix, rtol=√eps)
+    if Q' * Q == Q * Q' == I
+        return true
+    else
+        return isapprox(Q' * Q, I; rtol=rtol) && isapprox(Q * Q', I; rtol=rtol)
+    end
+end
 
 """
     isdcm(Q::AbstractMatrix)
