@@ -62,7 +62,7 @@ function isorthonormal(Q::AbstractMatrix)
 end
 
 """
-    isrotation(Q::AbstractMatrix, rtol=√eps)
+    isrotation(Q::AbstractMatrix)
 
 Test whether `Q` is a rotation matrix.
 
@@ -70,7 +70,7 @@ A direction cosine matrix is a ``3 \\times 3`` matrix that represent a coordinat
 transformation between two orthonormal reference frames. Let those frames be right-handed,
 then this transformation is always a rotation.
 """
-isrotation(Q::AbstractMatrix, rtol=√eps) = size(Q) == (3, 3) && isorthonormal(Q, rtol)
+isrotation(Q::AbstractMatrix) = size(Q) == (3, 3) && isorthonormal(Q)
 
 # See https://github.com/KristofferC/OhMyREPL.jl/blob/f682498/src/BracketInserter.jl#L44-L45
 const RTOL = Ref(sqrt(eps()))
