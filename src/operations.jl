@@ -2,7 +2,7 @@ using Tensorial: fromvoigt, ⊡, ⋅
 
 import Tensorial: contraction, double_contraction
 
-export isequivalent, ⩵
+export to_tensor, to_voigt, isequivalent, ⩵
 
 TensorStress(σ::EngineeringStress) = TensorStress(σ[1], σ[6], σ[5], σ[2], σ[4], σ[3])
 
@@ -79,6 +79,16 @@ ComplianceTensor(s::ComplianceMatrix) = ComplianceTensor(
         end
     end)
 )
+
+to_tensor(ϵ::EngineeringStrain) = TensorStrain(ϵ)
+to_tensor(σ::EngineeringStress) = TensorStress(σ)
+to_tensor(c::StiffnessMatrix) = StiffnessTensor(c)
+to_tensor(s::ComplianceMatrix) = ComplianceTensor(s)
+
+to_voigt(ε::TensorStrain) = EngineeringStrain(ε)
+to_voigt(σ::TensorStress) = EngineeringStress(σ)
+to_voigt(c::StiffnessTensor) = StiffnessMatrix(c)
+to_voigt(s::ComplianceTensor) = ComplianceMatrix(s)
 
 Base.:*(c::StiffnessMatrix, ϵ::EngineeringStrain) = EngineeringStress(c.data ⋅ ϵ.data)
 Base.:*(s::ComplianceMatrix, σ::EngineeringStress) = EngineeringStrain(s.data ⋅ σ.data)
