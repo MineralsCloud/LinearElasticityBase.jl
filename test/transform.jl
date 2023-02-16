@@ -20,3 +20,12 @@
     end
 end
 
+@testset "Test `rotate` of tensor strains" begin
+    ε = TensorStrain([
+        0.5 0.3 0.2
+        0.3 -0.2 -0.1
+        0.2 -0.1 0.1
+    ])
+    evecs = principal_axes(ε)
+    @test rotate(ε, evecs) ≈ evecs' * ε * evecs
+end
