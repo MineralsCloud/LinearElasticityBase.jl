@@ -1,5 +1,8 @@
+using LinearAlgebra: diag
+
 @testset "Test example from notes (3.35)" begin
-    for τ in (250, 250u"GPa")
+    # TODO: See https://github.com/ahwillia/Einsum.jl/issues/43
+    for τ in (250,)
         𝟘 = zero(τ)
         σ = TensorStress([
             𝟘 τ 𝟘
