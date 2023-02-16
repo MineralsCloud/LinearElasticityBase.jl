@@ -43,3 +43,10 @@ function rotate_basis(
     T′ = rotate_basis(t, a)
     return to_voigt(T′)
 end
+
+"""
+    isorthonormal(Q::AbstractMatrix)
+
+Test whether `Q` is an orthonormal matrix.
+"""
+isorthonormal(Q::AbstractMatrix) = Q' * Q == Q * Q' == I
