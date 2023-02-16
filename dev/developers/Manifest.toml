@@ -174,7 +174,7 @@ uuid = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 
 [[deps.LinearElasticityBase]]
 deps = ["Einsum", "LinearAlgebra", "StaticArrays", "Tensorial"]
-git-tree-sha1 = "7ca8b0cf577fb3ff2a280c74837bd9987694d86f"
+git-tree-sha1 = "48f8d271dceceb9207b163773c4374f274fefe81"
 repo-rev = "main"
 repo-url = "https://github.com/MineralsCloud/LinearElasticityBase.jl"
 uuid = "c9ccf908-6911-46c3-b424-436f6a0ac525"
@@ -213,9 +213,9 @@ version = "2022.2.1"
 
 [[deps.NaNMath]]
 deps = ["OpenLibm_jll"]
-git-tree-sha1 = "a7c3d1da1189a1c2fe843a3bfa04d18d20eb3211"
+git-tree-sha1 = "0877504529a3e5c3343c6f8b4c0381e57e4387e4"
 uuid = "77ba4419-2d1f-58cd-9bb1-8ffee604a2e3"
-version = "1.0.1"
+version = "1.0.2"
 
 [[deps.NetworkOptions]]
 uuid = "ca575930-c2e3-43a9-ace4-1e988b2c1908"
