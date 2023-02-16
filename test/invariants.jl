@@ -2,45 +2,45 @@ using LinearAlgebra: I, diagm, norm, tr
 
 # Example from https://www.continuummechanics.org/hydrodeviatoricstrain.html
 @testset "Test `hydrostatic` and `deviatoric`" begin
-    E = TensorStrain([
+    ε = TensorStrain([
         0.5 0.3 0.2
         0.3 -0.2 -0.1
         0.2 -0.1 0.1
     ])
-    @test hydrostatic(E) == TensorStrain(diagm(0 => [2, 2, 2] / 15))
-    @test deviatoric(E) == TensorStrain(E - diagm(0 => [2, 2, 2] / 15))
-    @test TensorStrain(hydrostatic(E) + deviatoric(E)) ≈ E
+    @test hydrostatic(ε) == TensorStrain(diagm(0 => [2, 2, 2] / 15))
+    @test deviatoric(ε) == TensorStrain(ε - diagm(0 => [2, 2, 2] / 15))
+    @test TensorStrain(hydrostatic(ε) + deviatoric(ε)) ≈ ε
 end
 
 @testset "Test unitary transformation" begin
-    E = TensorStrain([
+    ε = TensorStrain([
         0.5 0.3 0.2
         0.3 -0.2 -0.1
         0.2 -0.1 0.1
     ])
-    evecs = principal_axes(E)
+    evecs = principal_axes(ε)
     @test transpose(evecs) * evecs ≈ evecs * transpose(evecs) ≈ I
-    normal_strains = transpose(evecs) * E * evecs
+    normal_strains = transpose(evecs) * ε * evecs
     @test norm(normal_strains - [
         -0.370577 0 0
         0 0.115308 0
         0 0 0.655269
     ]) < 1e-6
-    @test isapprox(principal_values(E), [-0.370577, 0.115308, 0.655269]; atol=1e-6)
-    @test tr(normal_strains) ≈ tr(E) ≈ 2 / 5
+    @test isapprox(principal_values(ε), [-0.370577, 0.115308, 0.655269]; atol=1e-6)
+    @test tr(normal_strains) ≈ tr(ε) ≈ 2 / 5
 end
 
 # Example from https://www.continuummechanics.org/principalstrain.html
 @testset "Test principal invariants" begin
-    E = TensorStrain([
+    ε = TensorStrain([
         0.5 0.3 0.2
         0.3 -0.2 -0.1
         0.2 -0.1 0.1
     ])
-    @test length(principal_invariants(E)) == 3
-    @test principal_invariants(E)[1] == 0.4
-    @test principal_invariants(E)[2] ≈ -0.21
-    @test principal_invariants(E)[3] == -0.028
+    @test length(principal_invariants(ε)) == 3
+    @test principal_invariants(ε)[1] == 0.4
+    @test principal_invariants(ε)[2] ≈ -0.21
+    @test principal_invariants(ε)[3] == -0.028
 end
 
 @testset "Tests from homework 1" begin
