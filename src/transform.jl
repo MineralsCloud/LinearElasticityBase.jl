@@ -50,3 +50,14 @@ end
 Test whether `Q` is an orthonormal matrix.
 """
 isorthonormal(Q::AbstractMatrix) = Q' * Q == Q * Q' == I
+
+"""
+    isdcm(Q::AbstractMatrix)
+
+Test whether `Q` is a direction cosine matrix.
+
+A direction cosine matrix is a ``3 \\times 3`` matrix that represent a coordinate
+transformation between two orthonormal reference frames. Let those frames be right-handed,
+then this transformation is always a rotation.
+"""
+isdcm(Q::AbstractMatrix) = size(Q) == (3, 3) && isorthonormal(Q)
