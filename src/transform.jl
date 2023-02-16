@@ -17,10 +17,12 @@ for S in (:TensorStrain, :TensorStress)
         return $S(T)
     end
 end
-function rotate(T′::Union{EngineeringVariable,ElasticConstantsMatrix}, Q::AbstractMatrix)
-    t′ = to_tensor(T′)
-    T = rotate(t′, Q)
-    return to_voigt(T)
+for S in (:StiffnessMatrix, :ComplianceMatrix, :EngineeringStrain, :EngineeringStress)
+    @eval function rotate(T′::$S, Q::AbstractMatrix)
+        t′ = to_tensor(T′)
+        T = rotate(t′, Q)
+        return to_voigt(T)
+    end
 end
 
 for S in (:StiffnessTensor, :ComplianceTensor)
@@ -37,12 +39,12 @@ for S in (:TensorStrain, :TensorStress)
         return $S(T)
     end
 end
-function rotate_basis(
-    T::Union{EngineeringVariable,ElasticConstantsMatrix}, Q::AbstractMatrix
-)
-    t = to_tensor(T)
-    T′ = rotate_basis(t, Q)
-    return to_voigt(T′)
+for S in (:StiffnessMatrix, :ComplianceMatrix, :EngineeringStrain, :EngineeringStress)
+    @eval function rotate_basis(T::$S, Q::AbstractMatrix)
+        t = to_tensor(T)
+        T′ = rotate_basis(t, Q)
+        return to_voigt(T′)
+    end
 end
 
 """
