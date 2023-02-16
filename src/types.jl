@@ -36,9 +36,13 @@ TensorStrain(values...) = TensorStrain(SymmetricSecondOrderTensor{3}(values...))
 struct StiffnessTensor{T} <: Stiffness{T,4}
     data::SymmetricFourthOrderTensor{3,T}
 end
+StiffnessTensor(data::AbstractArray{T,4}) where {T} =
+    StiffnessTensor{T}(SymmetricFourthOrderTensor{3}(data))
 struct ComplianceTensor{T} <: Compliance{T,4}
     data::SymmetricFourthOrderTensor{3,T}
 end
+ComplianceTensor(data::AbstractArray{T,4}) where {T} =
+    ComplianceTensor{T}(SymmetricFourthOrderTensor{3}(data))
 struct EngineeringStress{T} <: Stress{T,1}
     data::MVector{6,T}
 end
