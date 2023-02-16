@@ -90,12 +90,18 @@ end
     @test principal_values(σ) ≈ [0, 2σ₀ / 3, 4σ₀ / 3]
 end
 
-@testset "Test `rotate` of tensor strains" begin
+@testset "Test using principal axes as rotation matrix" begin
     ε = TensorStrain([
         0.5 0.3 0.2
         0.3 -0.2 -0.1
         0.2 -0.1 0.1
     ])
-    evecs = principal_axes(ε)
-    @test rotate(ε, evecs) ≈ evecs' * ε * evecs
+    evecs = principal_axes(ε)'
+    normal_strains = rotate_axes(ε, evecs)
+    @test norm(normal_strains - [
+        -0.370577 0 0
+        0 0.115308 0
+        0 0 0.655269
+    ]) < 1e-6
+    @test principal_values(ε) ≈ diag(normal_strains)
 end
