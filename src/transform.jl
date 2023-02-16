@@ -1,46 +1,47 @@
 using Einsum: @einsum
+using LinearAlgebra: I
 
 export rotate, rotate_basis
 
 for S in (:StiffnessTensor, :ComplianceTensor)
-    @eval function rotate(T′::$S, a::AbstractMatrix)
-        @assert size(a) == (3, 3)
-        @einsum T[i, j, k, l] := T′[m, n, o, p] * a[m, i] * a[n, j] * a[o, k] * a[p, l]
+    @eval function rotate(T′::$S, Q::AbstractMatrix)
+        @assert isdcm(Q)
+        @einsum T[i, j, k, l] := T′[m, n, o, p] * Q[m, i] * Q[n, j] * Q[o, k] * Q[p, l]
         return $S(T)
     end
 end
 for S in (:TensorStrain, :TensorStress)
-    @eval function rotate(T′::$S, a::AbstractMatrix)
-        @assert size(a) == (3, 3)
-        @einsum T[i, j] := T′[k, l] * a[k, i] * a[l, j]
+    @eval function rotate(T′::$S, Q::AbstractMatrix)
+        @assert isdcm(Q)
+        @einsum T[i, j] := T′[k, l] * Q[k, i] * Q[l, j]
         return $S(T)
     end
 end
-function rotate(T′::Union{EngineeringVariable,ElasticConstantsMatrix}, a::AbstractMatrix)
+function rotate(T′::Union{EngineeringVariable,ElasticConstantsMatrix}, Q::AbstractMatrix)
     t′ = to_tensor(T′)
-    T = rotate(t′, a)
+    T = rotate(t′, Q)
     return to_voigt(T)
 end
 
 for S in (:StiffnessTensor, :ComplianceTensor)
-    @eval function rotate_basis(T::$S, a::AbstractMatrix)
-        @assert size(a) == (3, 3)
-        @einsum T′[i, j, k, l] := T[m, n, o, p] * a[i, m] * a[j, n] * a[k, o] * a[l, p]
+    @eval function rotate_basis(T::$S, Q::AbstractMatrix)
+        @assert isdcm(Q)
+        @einsum T′[i, j, k, l] := T[m, n, o, p] * Q[i, m] * Q[j, n] * Q[k, o] * Q[l, p]
         return $S(T)
     end
 end
 for S in (:TensorStrain, :TensorStress)
-    @eval function rotate_basis(T::$S, a::AbstractMatrix)
-        @assert size(a) == (3, 3)
-        @einsum T′[i, j] := T[k, l] * a[i, k] * a[j, l]
+    @eval function rotate_basis(T::$S, Q::AbstractMatrix)
+        @assert isdcm(Q)
+        @einsum T′[i, j] := T[k, l] * Q[i, k] * Q[j, l]
         return $S(T)
     end
 end
 function rotate_basis(
-    T::Union{EngineeringVariable,ElasticConstantsMatrix}, a::AbstractMatrix
+    T::Union{EngineeringVariable,ElasticConstantsMatrix}, Q::AbstractMatrix
 )
     t = to_tensor(T)
-    T′ = rotate_basis(t, a)
+    T′ = rotate_basis(t, Q)
     return to_voigt(T′)
 end
 
