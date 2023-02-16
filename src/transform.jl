@@ -16,10 +16,7 @@ for S in (:TensorStrain, :TensorStress)
         return $S(T)
     end
 end
-function rotate(
-    T′::Union{StiffnessMatrix,ComplianceMatrix,EngineeringStrain,EngineeringStress},
-    a::AbstractMatrix,
-)
+function rotate(T′::Union{EngineeringVariable,ElasticConstantsMatrix}, a::AbstractMatrix)
     t′ = to_tensor(T′)
     T = rotate(t′, a)
     return to_voigt(T)
@@ -40,8 +37,7 @@ for S in (:TensorStrain, :TensorStress)
     end
 end
 function rotate_basis(
-    T::Union{StiffnessMatrix,ComplianceMatrix,EngineeringStrain,EngineeringStress},
-    a::AbstractMatrix,
+    T::Union{EngineeringVariable,ElasticConstantsMatrix}, a::AbstractMatrix
 )
     t = to_tensor(T)
     T′ = rotate_basis(t, a)
