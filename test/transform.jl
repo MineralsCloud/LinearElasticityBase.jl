@@ -58,6 +58,38 @@ end
     end
 end
 
+@testset "Test question 5 in midterm 1, 2019" begin
+    σ₀ = 250
+    σ = TensorStress([
+        σ₀ 0 0
+        0 2σ₀ 0
+        0 0 0
+    ])
+    Q = [
+        1/√2 -1/√2 0
+        1/√6 1/√6 -2/√6
+        1/√3 1/√3 1/√3
+    ]
+    @test rotate_axes(σ, Q)[3, 1] ≈ -σ₀ / √6
+end
+
+@testset "Test question 6 in midterm 1, 2019" begin
+    σ₀ = 360
+    σ = TensorStress([
+        σ₀ σ₀/3 0
+        σ₀/3 σ₀ 0
+        0 0 0
+    ])
+    Q = θ -> [
+        cos(θ) sin(θ) 0
+        -sin(θ) cos(θ) 0
+        0 0 1
+    ]
+    @test rotate_axes(σ, Q(-pi / 4)) ≈ TensorStress(diagm([2σ₀ / 3, 4σ₀ / 3, 0]))
+    @test rotate_axes(σ, Q(pi / 4)) == TensorStress(diagm([4σ₀ / 3, 2σ₀ / 3, 0]))
+    @test principal_values(σ) ≈ [0, 2σ₀ / 3, 4σ₀ / 3]
+end
+
 @testset "Test `rotate` of tensor strains" begin
     ε = TensorStrain([
         0.5 0.3 0.2
