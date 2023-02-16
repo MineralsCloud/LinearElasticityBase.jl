@@ -1,13 +1,13 @@
 using LinearAlgebra: dot
 
-export elastic_energy_density
+export energydensity
 
-elastic_energy_density(σ::EngineeringStress, ϵ::EngineeringStrain) = dot(σ, ϵ) / 2
-elastic_energy_density(σ::TensorStress, ε::TensorStrain) = double_contraction(σ, ε) / 2
-elastic_energy_density(ε, σ) = elastic_energy_density(ε, σ)
-elastic_energy_density(cᵢⱼ::StiffnessMatrix, ϵ::EngineeringStrain) = dot(ϵ, cᵢⱼ, ϵ) / 2
-elastic_energy_density(sᵢⱼ::ComplianceMatrix, σ::EngineeringStress) = dot(σ, sᵢⱼ, σ) / 2
-elastic_energy_density(cᵢⱼₖₗ::StiffnessTensor, ε::TensorStrain) =
-    elastic_energy_density(StiffnessMatrix(cᵢⱼₖₗ), EngineeringStrain(ε))
-elastic_energy_density(sᵢⱼₖₗ::ComplianceTensor, σ::TensorStress) =
-    elastic_energy_density(ComplianceMatrix(sᵢⱼₖₗ), EngineeringStress(σ))
+energydensity(σ::EngineeringStress, ϵ::EngineeringStrain) = dot(σ, ϵ) / 2
+energydensity(σ::TensorStress, ε::TensorStrain) = double_contraction(σ, ε) / 2
+energydensity(ε, σ) = energydensity(ε, σ)
+energydensity(c::StiffnessMatrix, ϵ::EngineeringStrain) = dot(ϵ, c, ϵ) / 2
+energydensity(s::ComplianceMatrix, σ::EngineeringStress) = dot(σ, s, σ) / 2
+energydensity(c::StiffnessTensor, ε::TensorStrain) =
+    energydensity(StiffnessMatrix(c), EngineeringStrain(ε))
+energydensity(s::ComplianceTensor, σ::TensorStress) =
+    energydensity(ComplianceMatrix(s), EngineeringStress(σ))
