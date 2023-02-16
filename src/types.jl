@@ -1,4 +1,3 @@
-using LinearAlgebra: issymmetric
 using StaticArrays: MVector, MMatrix
 using Tensorial: SymmetricSecondOrderTensor, SymmetricFourthOrderTensor
 
@@ -17,19 +16,11 @@ abstract type Stiffness{T,N} <: AbstractArray{T,N} end
 abstract type Compliance{T,N} <: AbstractArray{T,N} end
 struct TensorStress{T} <: Stress{T,2}
     data::MMatrix{3,3,T,9}
-    function TensorStress{T}(data) where {T}
-        @assert issymmetric(data)
-        return new(data)
-    end
 end
 TensorStress(data::AbstractMatrix{T}) where {T} = TensorStress{T}(MMatrix{3,3}(data))
 TensorStress(values...) = TensorStress(SymmetricSecondOrderTensor{3}(values...))
 struct TensorStrain{T} <: Strain{T,2}
     data::MMatrix{3,3,T,9}
-    function TensorStrain{T}(data) where {T}
-        @assert issymmetric(data)
-        return new(data)
-    end
 end
 TensorStrain(data::AbstractMatrix{T}) where {T} = TensorStrain{T}(MMatrix{3,3}(data))
 TensorStrain(values...) = TensorStrain(SymmetricSecondOrderTensor{3}(values...))
@@ -55,19 +46,11 @@ EngineeringStrain(data::AbstractVector) = EngineeringStrain(MVector{6}(data))
 EngineeringStrain(values...) = EngineeringStrain(MVector{6}(values...))
 struct StiffnessMatrix{T} <: Stiffness{T,2}
     data::MMatrix{6,6,T,36}
-    function StiffnessMatrix{T}(data) where {T}
-        @assert issymmetric(data)
-        return new(data)
-    end
 end
 StiffnessMatrix(data::AbstractMatrix{T}) where {T} = StiffnessMatrix{T}(MMatrix{6,6}(data))
 StiffnessMatrix(values...) = StiffnessMatrix(SymmetricSecondOrderTensor{6}(values...))
 struct ComplianceMatrix{T} <: Compliance{T,2}
     data::MMatrix{6,6,T,36}
-    function ComplianceMatrix{T}(data) where {T}
-        @assert issymmetric(data)
-        return new(data)
-    end
 end
 ComplianceMatrix(data::AbstractMatrix{T}) where {T} =
     ComplianceMatrix{T}(MMatrix{6,6}(data))
