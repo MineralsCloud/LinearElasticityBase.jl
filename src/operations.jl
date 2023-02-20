@@ -2,7 +2,7 @@ using Tensorial: fromvoigt, ⊡, ⋅
 
 import Tensorial: contraction, double_contraction
 
-export to_tensor, to_voigt, isequivalent, ⩵
+export to_tensor, to_voigt, ⩵, ⩶
 
 TensorStress(σ::EngineeringStress) = TensorStress(σ[1], σ[6], σ[5], σ[2], σ[4], σ[3])
 
@@ -105,16 +105,34 @@ contraction(s::ComplianceTensor, σ::TensorStress, ::Val{2}) = TensorStrain(s.da
 @inline double_contraction(s::ComplianceTensor, σ::TensorStress) = contraction(s, σ, Val(2))
 
 # See https://discourse.julialang.org/t/how-to-compare-two-vectors-whose-elements-are-equal-but-their-types-are-not-the-same/94309/6
-for (S, T) in (
-    (:EngineeringStress, :EngineeringStrain),
-    (:TensorStress, :TensorStrain),
-    (:StiffnessTensor, :ComplianceTensor),
-    (:StiffnessMatrix, :ComplianceMatrix),
+for T in (
+    :EngineeringStrain,
+    :EngineeringStress,
+    :TensorStrain,
+    :TensorStress,
+    :StiffnessMatrix,
+    :StiffnessTensor,
+    :ComplianceMatrix,
+    :ComplianceTensor,
 )
     @eval begin
-        isequivalent(s::$S, t::$T) = false
-        isequivalent(t::$T, s::$S) = isequivalent(s, t)
+        ⩵(s::$T, t::$T) = s == t
+        ⩵(s, t::$T) = s isa $T && s == t
+        ⩵(s::$T, t) = t ⩵ s
+        ⩶(s, t::$T) = s === t
+        ⩶(s::$T, t) = t ⩶ s
     end
 end
-isequivalent(x, y) = x == y  # Fallback
-const ⩵ = isequivalent
+for (S, T) in (
+    (:EngineeringStress, :TensorStress),
+    (:EngineeringStrain, :TensorStrain),
+    (:StiffnessMatrix, :StiffnessTensor),
+    (:ComplianceMatrix, :ComplianceTensor),
+)
+    @eval begin
+        ⩵(s::$S, t::$T) = to_voigt(t) ⩵ s
+        ⩵(t::$T, s::$S) = s ⩵ t
+        ⩶(s::$S, t::$T) = to_voigt(t) ⩶ s
+        ⩶(t::$T, s::$S) = s ⩶ t
+    end
+end
