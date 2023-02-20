@@ -63,10 +63,14 @@ ComplianceMatrix(data::AbstractMatrix{T}) where {T} =
     ComplianceMatrix{T}(MMatrix{6,6}(data))
 ComplianceMatrix(values...) = ComplianceMatrix(SymmetricSecondOrderTensor{6}(values...))
 
-Base.size(::TensorVariable) = (3, 3)
-Base.size(::ElasticConstantsTensor) = (3, 3, 3, 3)
-Base.size(::EngineeringVariable) = (6,)
-Base.size(::ElasticConstantsMatrix) = (6, 6)
+Base.size(::Type{<:TensorVariable}) = (3, 3)
+Base.size(::Type{<:ElasticConstantsTensor}) = (3, 3, 3, 3)
+Base.size(::Type{<:EngineeringVariable}) = (6,)
+Base.size(::Type{<:ElasticConstantsMatrix}) = (6, 6)
+Base.size(A::TensorVariable) = size(typeof(A))
+Base.size(A::ElasticConstantsTensor) = size(typeof(A))
+Base.size(A::EngineeringVariable) = size(typeof(A))
+Base.size(A::ElasticConstantsMatrix) = size(typeof(A))
 
 Base.getindex(A::Union{Variable,ElasticConstants}, i) = getindex(parent(A), i)
 
@@ -103,8 +107,20 @@ for T in (
             bc::Broadcast.Broadcasted{Broadcast.ArrayStyle{$T}}, ::Type{S}
         ) where {S} = similar($T{S}, axes(bc))
         # Override https://github.com/JuliaLang/julia/blob/618bbc6/base/abstractarray.jl#L841
-        Base.similar(::Type{S}, dims::Dims) where {S<:$T} = $T(zeros(eltype(S), dims))
+        function Base.similar(::Type{S}, dims::Dims) where {S<:$T}
+            if dims == size(S)
+                $T(zeros(eltype(S), dims))
+            else
+                throw(ArgumentError(string("invalid size ", dims, " for type ", typeof(S))))
+            end
+        end
         # Override https://github.com/JuliaLang/julia/blob/618bbc6/base/abstractarray.jl#L806
-        Base.similar(::$T, ::Type{S}, dims::Dims) where {S} = $T(zeros(S, dims))
+        function Base.similar(A::$T, ::Type{S}, dims::Dims) where {S}
+            if dims == size(A)
+                $T(zeros(eltype(S), dims))
+            else
+                throw(ArgumentError(string("invalid size ", dims, " for type ", typeof(A))))
+            end
+        end
     end
 end
