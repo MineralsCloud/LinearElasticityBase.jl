@@ -63,10 +63,14 @@ ComplianceMatrix(data::AbstractMatrix{T}) where {T} =
     ComplianceMatrix{T}(MMatrix{6,6}(data))
 ComplianceMatrix(values...) = ComplianceMatrix(SymmetricSecondOrderTensor{6}(values...))
 
-Base.size(::TensorVariable) = (3, 3)
-Base.size(::ElasticConstantsTensor) = (3, 3, 3, 3)
-Base.size(::EngineeringVariable) = (6,)
-Base.size(::ElasticConstantsMatrix) = (6, 6)
+Base.size(::Type{<:TensorVariable}) = (3, 3)
+Base.size(::Type{<:ElasticConstantsTensor}) = (3, 3, 3, 3)
+Base.size(::Type{<:EngineeringVariable}) = (6,)
+Base.size(::Type{<:ElasticConstantsMatrix}) = (6, 6)
+Base.size(A::TensorVariable) = size(typeof(A))
+Base.size(A::ElasticConstantsTensor) = size(typeof(A))
+Base.size(A::EngineeringVariable) = size(typeof(A))
+Base.size(A::ElasticConstantsMatrix) = size(typeof(A))
 
 Base.getindex(A::Union{Variable,ElasticConstants}, i) = getindex(parent(A), i)
 
