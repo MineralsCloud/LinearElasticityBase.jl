@@ -107,8 +107,20 @@ for T in (
             bc::Broadcast.Broadcasted{Broadcast.ArrayStyle{$T}}, ::Type{S}
         ) where {S} = similar($T{S}, axes(bc))
         # Override https://github.com/JuliaLang/julia/blob/618bbc6/base/abstractarray.jl#L841
-        Base.similar(::Type{S}, dims::Dims) where {S<:$T} = $T(zeros(eltype(S), dims))
+        function Base.similar(::Type{S}, dims::Dims) where {S<:$T}
+            if dims == size(S)
+                $T(zeros(eltype(S), dims))
+            else
+                throw(ArgumentError(string("invalid size ", dims, " for type ", typeof(S))))
+            end
+        end
         # Override https://github.com/JuliaLang/julia/blob/618bbc6/base/abstractarray.jl#L806
-        Base.similar(::$T, ::Type{S}, dims::Dims) where {S} = $T(zeros(S, dims))
+        function Base.similar(A::$T, ::Type{S}, dims::Dims) where {S}
+            if dims == size(A)
+                $T(zeros(eltype(S), dims))
+            else
+                throw(ArgumentError(string("invalid size ", dims, " for type ", typeof(A))))
+            end
+        end
     end
 end
