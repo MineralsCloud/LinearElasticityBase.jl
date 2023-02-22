@@ -49,20 +49,20 @@ end
 # Constructors
 for T in (:EngineeringStress, :EngineeringStrain)
     @eval begin
-        $T(data::AbstractVector) = $T(MVector{6}(data))
-        $T(values...) = $T(vec(values))
+        $T(data::AbstractVector) = $T(MVector{6}(promote(data...)))
+        $T(values...) = $T(collect(values))
     end
 end
 for (T, N) in
     zip((:TensorStress, :TensorStrain, :StiffnessMatrix, :ComplianceMatrix), (3, 3, 6, 6))
     @eval begin
-        $T(data::AbstractMatrix{S}) where {S} = $T{S}(MMatrix{$N,$N}(data))
+        $T(data::AbstractMatrix{S}) where {S} = $T{S}(MMatrix{$N,$N}(promote(data...)))
         $T(values...) = $T(SymmetricSecondOrderTensor{$N}(values...))
     end
 end
 for T in (:StiffnessTensor, :ComplianceTensor)
     @eval $T(data::AbstractArray{S,4}) where {S} =
-        $T{S}(SymmetricFourthOrderTensor{3}(data))
+        $T{S}(SymmetricFourthOrderTensor{3}(promote(data...)))
 end
 
 Base.size(::Type{<:TensorVariable}) = (3, 3)
