@@ -113,7 +113,7 @@ for T in (
             if dims == size(S)
                 $T(zeros(eltype(S), dims))
             else
-                return Array{eltype(S)}(undef, dims)
+                return Array{eltype(S),ndims(S)}(undef, dims)
             end
         end
         # Override https://github.com/JuliaLang/julia/blob/618bbc6/base/abstractarray.jl#L806
@@ -121,7 +121,7 @@ for T in (
             if dims == size(A)
                 $T(zeros(S, dims))
             else
-                return Array{S}(undef, dims)
+                return Array{S,ndims(A)}(undef, dims)
             end
         end
     end
