@@ -50,7 +50,7 @@ end
 for T in (:EngineeringStress, :EngineeringStrain)
     @eval begin
         $T(data::AbstractVector) = $T(MVector{6}(promote(data...)))
-        $T(values...) = $T(vec(values))
+        $T(values...) = $T(collect(values))
     end
 end
 for (T, N) in
