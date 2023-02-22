@@ -111,15 +111,15 @@ for T in (
             if dims == size(S)
                 $T(zeros(eltype(S), dims))
             else
-                throw(ArgumentError(string("invalid size ", dims, " for type ", typeof(S))))
+                return Array{eltype(S)}(undef, dims)
             end
         end
         # Override https://github.com/JuliaLang/julia/blob/618bbc6/base/abstractarray.jl#L806
         function Base.similar(A::$T, ::Type{S}, dims::Dims) where {S}
             if dims == size(A)
-                $T(zeros(eltype(S), dims))
+                $T(zeros(S, dims))
             else
-                throw(ArgumentError(string("invalid size ", dims, " for type ", typeof(A))))
+                return Array{S}(undef, dims)
             end
         end
     end
