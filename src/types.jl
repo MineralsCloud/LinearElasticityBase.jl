@@ -24,44 +24,46 @@ const ElasticConstantsMatrix{T} = ElasticConstants{T,2}
 struct TensorStress{T} <: Stress{T,2}
     data::MMatrix{3,3,T,9}
 end
-TensorStress(data::AbstractMatrix{T}) where {T} = TensorStress{T}(MMatrix{3,3}(data))
-TensorStress(values...) = TensorStress(SymmetricSecondOrderTensor{3}(values...))
 struct TensorStrain{T} <: Strain{T,2}
     data::MMatrix{3,3,T,9}
 end
-TensorStrain(data::AbstractMatrix{T}) where {T} = TensorStrain{T}(MMatrix{3,3}(data))
-TensorStrain(values...) = TensorStrain(SymmetricSecondOrderTensor{3}(values...))
 struct StiffnessTensor{T} <: Stiffness{T,4}
     data::SymmetricFourthOrderTensor{3,T}
 end
-StiffnessTensor(data::AbstractArray{T,4}) where {T} =
-    StiffnessTensor{T}(SymmetricFourthOrderTensor{3}(data))
 struct ComplianceTensor{T} <: Compliance{T,4}
     data::SymmetricFourthOrderTensor{3,T}
 end
-ComplianceTensor(data::AbstractArray{T,4}) where {T} =
-    ComplianceTensor{T}(SymmetricFourthOrderTensor{3}(data))
 struct EngineeringStress{T} <: Stress{T,1}
     data::MVector{6,T}
 end
-EngineeringStress(data::AbstractVector) = EngineeringStress(MVector{6}(data))
-EngineeringStress(values...) = EngineeringStress(MVector{6}(values...))
 struct EngineeringStrain{T} <: Strain{T,1}
     data::MVector{6,T}
 end
-EngineeringStrain(data::AbstractVector) = EngineeringStrain(MVector{6}(data))
-EngineeringStrain(values...) = EngineeringStrain(MVector{6}(values...))
 struct StiffnessMatrix{T} <: Stiffness{T,2}
     data::MMatrix{6,6,T,36}
 end
-StiffnessMatrix(data::AbstractMatrix{T}) where {T} = StiffnessMatrix{T}(MMatrix{6,6}(data))
-StiffnessMatrix(values...) = StiffnessMatrix(SymmetricSecondOrderTensor{6}(values...))
 struct ComplianceMatrix{T} <: Compliance{T,2}
     data::MMatrix{6,6,T,36}
 end
-ComplianceMatrix(data::AbstractMatrix{T}) where {T} =
-    ComplianceMatrix{T}(MMatrix{6,6}(data))
-ComplianceMatrix(values...) = ComplianceMatrix(SymmetricSecondOrderTensor{6}(values...))
+
+# Constructors
+for T in (:EngineeringStress, :EngineeringStrain)
+    @eval begin
+        $T(data::AbstractVector) = $T(MVector{6}(data))
+        $T(values...) = $T(vec(values))
+    end
+end
+for (T, N) in
+    zip((:TensorStress, :TensorStrain, :StiffnessMatrix, :ComplianceMatrix), (3, 3, 6, 6))
+    @eval begin
+        $T(data::AbstractMatrix{S}) where {S} = $T{S}(MMatrix{$N,$N}(data))
+        $T(values...) = $T(SymmetricSecondOrderTensor{$N}(values...))
+    end
+end
+for T in (:StiffnessTensor, :ComplianceTensor)
+    @eval $T(data::AbstractArray{S,4}) where {S} =
+        $T{S}(SymmetricFourthOrderTensor{3}(data))
+end
 
 Base.size(::Type{<:TensorVariable}) = (3, 3)
 Base.size(::Type{<:ElasticConstantsTensor}) = (3, 3, 3, 3)
